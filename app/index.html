@@ -19,9 +19,13 @@
 <section class="kpi" aria-label="Progress summary">
   <div class="kpi-card"><span class="kpi-num" id="kpi-earned">0 / 55</span><span class="kpi-label">trophies earned</span></div>
   <div class="kpi-card"><span class="kpi-num" id="kpi-pct">0%</span><span class="kpi-label">toward platinum</span></div>
-  <div class="kpi-card"><span class="kpi-num" id="kpi-grades">0 gold · 0 silver · 0 bronze left</span><span class="kpi-label">remaining by grade</span></div>
+  <div class="kpi-card"><span class="kpi-num" id="kpi-grades">2 gold · 6 silver · 46 bronze</span><span class="kpi-label">left by grade</span></div>
   <div class="kpi-card warn"><span class="kpi-num" id="kpi-missable">1 missable left</span><span class="kpi-label">potentially missable, not earned</span></div>
 </section>
+<div class="progress-wrap" aria-label="Progress bar toward platinum">
+  <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="55" aria-valuenow="0" id="kpi-bar"><div class="progress-fill" id="kpi-bar-fill"></div></div>
+  <span class="progress-text" id="kpi-bar-text">0 of 55 earned — 55 to go</span>
+</div>
 
 <section class="nextup" aria-label="Next up">
   <h2>Next up</h2>
@@ -29,7 +33,7 @@
 </section>
 
 <section class="controls" aria-label="Filters and progress tools">
-  <label>Search <input id="search" type="search" placeholder="Search name or description" aria-label="Search trophies"></label>
+  <label>Search <input id="search" type="search" placeholder="Search trophies" aria-label="Search trophies"></label>
   <label>Kind
     <select id="kind" aria-label="Filter by kind">
       <option value="all">All kinds</option>
@@ -72,7 +76,7 @@
 <main class="layout">
   <section class="list-col" aria-label="Trophy list">
     <h2>Trophy checklist</h2>
-    <p class="hint">Story trophies stay hidden until earned unless spoilers are on. Tick a trophy to mark it earned — progress is saved in this browser.</p>
+    <p class="hint">Story trophies stay hidden until earned unless spoilers are on. Tick a trophy to mark it earned — progress is saved in this browser. Every row shows its target, so you can see the size of each job at a glance.</p>
     <ul id="rows" class="trophy-list"></ul>
   </section>
 
@@ -86,25 +90,49 @@
 
 <section class="roadmap" id="roadmap" aria-label="Roadmap to platinum">
   <h2>Roadmap to platinum — about 200 hours, 1 playthrough</h2>
-  <ol class="steps">
-    <li><strong>Step 1 — Play the story, save every chapter (60–80 hours).</strong> Finish Chapters 1–5 and the final mission. Make a manual save at the start of each chapter (15 manual saves + 1 autosave exist). Before you leave Chapter 1, meditate at the balcony spot: Positive Mental Attitude is the only trophy flagged as potentially missable, and the Chapter 1 spot may not be reachable later. All other story trophies are unmissable.</li>
-    <li><strong>Step 2 — 100% completion + challenges.</strong> After the story, chase A Long Road: finish all Strangers &amp; Freaks strands (8 needed), all activities (shooting range golds, drone races, races, fishing, arcade, bowling, meditation), 50 challenges, 250 stunts, 100 vehicles discovered, full exploration of Leonida and the collectibles (3 card sets, WAiNK at 100 locations).</li>
-    <li><strong>Step 3 — Cleanup: robberies, money &amp; misc.</strong> Rob 5 bank vaults, an armored truck, 3 shops back-to-back, a jewelry store undetected and one illegal operation per gang; launder $250,000 in Marked Bills, spend $100,000, buy all garages, register 10 vehicles; then the cryptic misc trophies (Personal Best, Actions Speak Louder, Bad Luck I Guess, The Truth Is Out There) — their triggers are not yet pinned down by any source, so check the cited guides for updates instead of guessing.</li>
-  </ol>
-  <h3>Missable trophies</h3>
-  <p><strong>Positive Mental Attitude — potentially missable.</strong> Meditate at every spot across Leonida, including the balcony spot in Chapter 1. No source has confirmed the full spot list or whether the Chapter 1 spot is reachable later, so keep a Chapter 1 manual save until you confirm it. Every other trophy can be earned after the story in free roam.</p>
+  <div class="steps">
+    <article class="step-card">
+      <h3>Step 1 — Play the story, save every chapter</h3>
+      <p class="step-hours">60–80 hours · 12 story trophies</p>
+      <p>Finish Chapters 1–5 and the final mission. Make a manual save at the start and end of each chapter (15 manual saves + 1 autosave exist — 10 saves cover the chapters, rotate the other 5 in free roam). Before you leave Chapter 1, meditate at the balcony spot: Positive Mental Attitude is the only trophy flagged as potentially missable, and the Chapter 1 spot may not be reachable later. All other story trophies are unmissable, and quest givers who vanish for a while always return.</p>
+    </article>
+    <article class="step-card">
+      <h3>Step 2 — 100% completion + challenges</h3>
+      <p class="step-hours">~100 hours · A Long Road (gold)</p>
+      <p>After the story, open the checklist under Progress &gt; Stats &gt; 100% Completion. It is closer to 60% true completion: any 100 optional missions, scan 200 of 277 base-model vehicles with WAiNK, study 100 of 255 animals with binoculars, any 70 of 80 challenges, 300 stunts, all shooting ranges, all drone races, all 8 bank jobs and all 39 gang operations. Nothing on it is missable — finish it all in free roam. This step also pops most activity trophies on the way.</p>
+    </article>
+    <article class="step-card">
+      <h3>Step 3 — Cleanup: robberies, money &amp; misc</h3>
+      <p class="step-hours">~10 hours · robbery, money &amp; misc</p>
+      <p>Rob 5 bank vaults, an armored truck, 3 shops back-to-back, a jewelry store undetected and one illegal operation per gang; launder $250,000 in Marked Bills, spend $100,000, buy all 8 garages ($160,000), register 10 vehicles; then the cryptic misc trophies. Two of them are now pinned down — Personal Best (max strength, both characters) and Actions Speak Louder (500 profile actions) — while In The Beginning…, Bad Luck, I Guess, The Truth Is Out There and Ten Pin are still unconfirmed: check the cited guides for updates instead of guessing.</p>
+    </article>
+  </div>
+  <div class="roadmap-grid">
+    <div class="missable-box">
+      <h3>Missable trophies — 1 of 55</h3>
+      <p><strong>Positive Mental Attitude — potentially missable.</strong> Meditate at every spot across Leonida (18 spots, 10 locations), including the balcony spot in Chapter 1: after the mission “Down to Earth”, Lucia talks about meditating in the kitchen in the morning, then walks to the balcony at Jason’s house — follow her and accept. It adds +1 to the counter but is not listed as a spot, so it is still unconfirmed whether it is required. Do it anyway and keep a Chapter 1 manual save until the trophy pops. Every other trophy can be earned after the story in free roam.</p>
+    </div>
+    <div class="kind-box">
+      <h3>Trophies by kind — 55 total</h3>
+      <table class="kind-table">
+        <thead><tr><th scope="col">Kind</th><th scope="col">Total</th><th scope="col">Earned</th></tr></thead>
+        <tbody id="kind-rows"></tbody>
+      </table>
+    </div>
+  </div>
   <h3>Rules that protect your run</h3>
   <ul>
     <li>No online trophies and no difficulty trophy — play on any difficulty.</li>
     <li>Cheats disable trophies (and the save) — do not use them on your platinum save.</li>
     <li>There is no mission replay and no New Game+ — chapter saves are your only rewind.</li>
-    <li>Kind and missable flags here are this guide's classification from the official descriptions, not PSN data.</li>
+    <li>Optional missions are plentiful (200–300+), so a few missable ones never lock you out of the 100 you need.</li>
+    <li>Kind and missable flags here are this guide’s classification from the official descriptions, not PSN data.</li>
   </ul>
 </section>
 
 <footer class="about">
   <h2>About &amp; sources</h2>
-  <p>Guides are written in this tracker's own words from the official trophy descriptions and the public guides below — never copied from them. Where no source has pinned down a method, the guide says so. Trophy names, descriptions and grades are reproduced exactly as PlayStation publishes them (mirrored by Exophase and PSNProfiles); Rockstar Games has never published the list itself. This tracker is an unofficial fan guide: no Rockstar logo or official artwork is used anywhere. It works fully offline — it loads no file from outside this folder and makes no network request; source links below are plain links you may choose to follow.</p>
+  <p>Guides are written in this tracker’s own words from the official trophy descriptions and the public guides below — never copied from them. Concrete counts, unlock conditions and in-game tracking menus come from PowerPyx’s roadmap (meditation spots, stunt categories, vehicle and animal counts, challenge totals, quest names and money figures). Where no source has pinned down a method, the guide says so. Trophy names, descriptions and grades are reproduced exactly as PlayStation publishes them (mirrored by Exophase and PSNProfiles); Rockstar Games has never published the list itself. This tracker is an unofficial fan guide: no Rockstar logo or official artwork is used anywhere. It works fully offline — it loads no file from outside this folder and makes no network request; source links below are plain links you may choose to follow.</p>
   <ul>
     <li>PowerPyx — GTA 6 Trophy Guide &amp; Roadmap: <a href="https://www.powerpyx.com/gta-6-grand-theft-auto-vi-trophy-guide-roadmap/">powerpyx.com</a></li>
     <li>Exophase — GTA VI trophies: <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">exophase.com</a></li>

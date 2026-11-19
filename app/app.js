@@ -1,5 +1,8 @@
 // Leonida Platinum Tracker: checklist + guide panel for the 55 GTA VI trophies.
 // Progress lives in localStorage; nothing is fetched from outside this folder.
+// Round 2: shareable filtered views (?kind=robbery&grade=silver&spoilers=on),
+// a progress bar, per-trophy target/when lines, and a live kind breakdown
+// in the roadmap — all rendered from app/data/trophies.json.
 const KEY = 'leonida-platinum-tracker-v1';
 const SPOILER_KEY = 'leonida-platinum-spoilers-v1';
 const SOURCES = {
@@ -10,6 +13,11 @@ const SOURCES = {
   U7BUY: 'https://www.u7buy.com/blog/gta-6-trophies/',
 };
 const KIND_ORDER = ['story', 'activities', 'side-story', 'robbery', 'combat', 'exploration', 'collectibles', 'money', 'misc', 'platinum'];
+const KIND_LABELS = {
+  story: 'Story', 'side-story': 'Side story', activities: 'Activities', robbery: 'Robbery',
+  combat: 'Combat', exploration: 'Exploration', collectibles: 'Collectibles',
+  money: 'Money', misc: 'Misc', platinum: 'Platinum path',
+};
 
 const doc = await (await fetch('data/trophies.json')).json();
 const trophies = doc.trophies;
@@ -46,9 +54,12 @@ function renderKpi() {
   for (const t of trophies) {
     if (!earned.has(t.name) && left[t.grade] !== undefined) left[t.grade] += 1;
   }
-  $('kpi-grades').textContent = `${left.gold} gold · ${left.silver} silver · ${left.bronze} bronze left`;
+  $('kpi-grades').textContent = `${left.gold} gold · ${left.silver} silver · ${left.bronze} bronze`;
   const missLeft = trophies.filter((t) => t.missable && !earned.has(t.name)).length;
   $('kpi-missable').textContent = missLeft === 0 ? '0 missable left' : `${missLeft} missable left`;
+  $('kpi-bar-fill').style.width = `${(n / total) * 100}%`;
+  $('kpi-bar').setAttribute('aria-valuenow', String(n));
+  $('kpi-bar-text').textContent = `${n} of ${total} earned — ${total - n} to go`;
   const next = trophies
     .filter((t) => !earned.has(t.name))
     .sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || a.id - b.id)[0];
@@ -62,7 +73,26 @@ function renderKpi() {
   } else {
     const strong = document.createElement('strong');
     strong.textContent = `Next up: ${next.name}`;
-    $('nextup-text').append(strong, document.createTextNode(` — ${next.description} (${next.grade}, ${next.kind}).`));
+    $('nextup-text').append(strong, document.createTextNode(` — ${next.description} (${next.grade}, ${next.kind}; target: ${next.target}).`));
+  }
+}
+
+function renderKindTable() {
+  const body = $('kind-rows');
+  if (!body) return;
+  body.replaceChildren();
+  for (const kind of KIND_ORDER) {
+    const inKind = trophies.filter((t) => t.kind === kind);
+    const got = inKind.filter((t) => earned.has(t.name)).length;
+    const tr = document.createElement('tr');
+    const name = document.createElement('td');
+    name.textContent = KIND_LABELS[kind];
+    const total = document.createElement('td');
+    total.textContent = String(inKind.length);
+    const earnedCell = document.createElement('td');
+    earnedCell.textContent = `${got} / ${inKind.length}`;
+    tr.append(name, total, earnedCell);
+    body.append(tr);
   }
 }
 
@@ -78,6 +108,10 @@ function renderGuide(t) {
   const h = document.createElement('h3');
   h.append(medalSpan(t), document.createTextNode(` ${t.name} — ${t.grade}`));
   guideBody.append(h);
+  const targetLine = document.createElement('p');
+  targetLine.className = 'target-line';
+  targetLine.textContent = `Target: ${t.target} · When: ${t.when}`;
+  guideBody.append(targetLine);
   if (t.missable) {
     const note = document.createElement('p');
     note.className = 'guide-note';
@@ -125,13 +159,14 @@ function visibleTrophies() {
     if ($('status').value === 'earned' && !earned.has(t.name)) return false;
     if ($('status').value === 'not' && earned.has(t.name)) return false;
     if ($('missable-only').checked && !t.missable) return false;
-    if (q && !(`${t.name} ${t.description}`.toLowerCase().includes(q))) return false;
+    if (q && !(`${t.name} ${t.description} ${t.target} ${t.when}`.toLowerCase().includes(q))) return false;
     return true;
   });
 }
 
 function render() {
   renderKpi();
+  renderKindTable();
   const list = visibleTrophies();
   rowsEl.replaceChildren();
   for (const t of list) {
@@ -168,7 +203,7 @@ function render() {
     desc.textContent = hidden ? 'Story trophy — turn on “Show story spoilers” to reveal its name and description.' : t.description;
     const meta = document.createElement('div');
     meta.className = 'row-meta';
-    meta.textContent = `${t.grade} · ${t.kind}`;
+    meta.textContent = `${t.grade} · ${t.kind} · ${t.target}`;
     if (t.missable) {
       const flag = document.createElement('span');
       flag.className = 'flag-missable';
@@ -232,9 +267,24 @@ $('reset').addEventListener('click', () => {
 });
 
 // Deep link: ?trophy=17 or #trophy-17 opens that trophy's guide on load.
+// Shareable filtered views: ?kind=robbery, ?grade=silver, ?status=not,
+// ?q=stunt and ?spoilers=on apply the matching controls on load.
 const params = new URLSearchParams(location.search);
 const hashMatch = location.hash.match(/^#trophy-(\d+)$/);
 const wanted = Number(params.get('trophy') || (hashMatch ? hashMatch[1] : ''));
 if (wanted && trophies.some((t) => t.id === wanted)) selectedId = wanted;
+for (const [param, id] of [['kind', 'kind'], ['grade', 'grade'], ['status', 'status']]) {
+  const v = params.get(param);
+  if (v && [...$(id).options].some((o) => o.value === v)) $(id).value = v;
+}
+if (params.get('q')) $('search').value = params.get('q');
+if (params.get('spoilers') === 'on') {
+  $('spoiler').checked = true;
+  localStorage.setItem(SPOILER_KEY, 'true');
+}
+if (params.get('spoilers') === 'off') {
+  $('spoiler').checked = false;
+  localStorage.setItem(SPOILER_KEY, 'false');
+}
 
 render();

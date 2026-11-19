@@ -1,4 +1,7 @@
 /* Leonida Platinum Tracker — paper theme, system fonts only, offline. */
+/* Round 2: progress bar under the KPI cards, roadmap step cards + kind table,
+   target line in the guide panel, tighter header/controls so the cover shows
+   more guide text at 1280x800. */
 * { box-sizing: border-box; }
 html { font-size: 16px; }
 body {
@@ -16,7 +19,7 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 
 .site-header {
   display: flex; gap: 2rem; justify-content: space-between; align-items: flex-start;
-  padding: 1.5rem 2rem 1rem; max-width: 1280px; margin: 0 auto;
+  padding: 1.25rem 2rem 0.75rem; max-width: 1280px; margin: 0 auto;
 }
 .subtitle { margin: 0; color: #3a4048; max-width: 60rem; }
 .badge-note { margin: 0; color: #626a75; font-size: 0.9rem; max-width: 22rem; }
@@ -27,27 +30,38 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 }
 .kpi-card {
   background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px;
-  padding: 0.9rem 1rem; display: flex; flex-direction: column; gap: 0.15rem;
+  padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.15rem;
 }
 .kpi-card.warn { border-color: #d24e2a; }
-.kpi-num { font-size: 1.25rem; font-weight: 700; }
+.kpi-num { font-size: 1.2rem; font-weight: 700; white-space: nowrap; }
 .kpi-label { color: #626a75; font-size: 0.9rem; }
 
+.progress-wrap {
+  max-width: 1280px; margin: 0.6rem auto 0; padding: 0 2rem;
+  display: flex; align-items: center; gap: 0.75rem;
+}
+.progress-bar {
+  flex: 1; height: 12px; background: #e5ded0; border-radius: 6px; overflow: hidden;
+  border: 1px solid #ddd5c8;
+}
+.progress-fill { height: 100%; width: 0; background: #d24e2a; transition: width 0.2s; }
+.progress-text { color: #626a75; font-size: 0.9rem; white-space: nowrap; }
+
 .nextup, .controls, .count-line { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
-.nextup { margin-top: 1rem; background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 1rem 1.25rem; }
+.nextup { margin-top: 0.75rem; background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 0.75rem 1.25rem; }
 .nextup p { margin: 0; }
 .nextup strong { color: #a03a1a; }
 
 .controls {
-  display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end;
-  margin-top: 1rem;
+  display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: end;
+  margin-top: 0.75rem;
 }
 .controls label { display: flex; flex-direction: column; gap: 0.2rem; font-size: 0.9rem; color: #3a4048; }
 .controls label.check { flex-direction: row; align-items: center; gap: 0.4rem; min-height: 44px; }
-.controls input[type="search"] { width: 16rem; padding: 0.4rem 0.6rem; border: 1px solid #9aa1ab; border-radius: 6px; background: #fff; }
+.controls input[type="search"] { width: 13rem; padding: 0.4rem 0.6rem; border: 1px solid #9aa1ab; border-radius: 6px; background: #fff; }
 .controls select { padding: 0.4rem 0.6rem; border: 1px solid #9aa1ab; border-radius: 6px; background: #fff; }
 .controls button, .import-btn {
-  min-height: 44px; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer;
+  min-height: 44px; padding: 0.5rem 0.9rem; border-radius: 6px; cursor: pointer;
   border: 1px solid #9aa1ab; background: #ffffff; color: #1d2129;
 }
 .controls button { background: #d24e2a; border-color: #a03a1a; color: #fff; font-weight: 600; }
@@ -100,10 +114,29 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 .guide-col .sources { font-size: 0.9rem; }
 .guide-col .sources a { margin-right: 0.5rem; }
 .guide-note { background: #fdf3ee; border: 1px solid #d24e2a; border-radius: 6px; padding: 0.6rem 0.75rem; }
+.target-line { font-size: 0.9rem; font-weight: 700; color: #a03a1a; }
 
 .roadmap, .about { max-width: 1280px; margin: 2rem auto 0; padding: 0 2rem 2rem; }
 .roadmap { background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 1.25rem 1.5rem; }
-.roadmap ol.steps li { margin-bottom: 0.75rem; }
+.steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 0.5rem; }
+.step-card {
+  background: #f6f3ee; border: 1px solid #ddd5c8; border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+.step-card h3 { margin-top: 0; font-size: 1.05rem; }
+.step-card p { margin: 0.35rem 0; font-size: 0.95rem; }
+.step-hours { font-weight: 700; color: #a03a1a; }
+.roadmap-grid { display: grid; grid-template-columns: 7fr 5fr; gap: 0.75rem; margin-top: 0.75rem; }
+.missable-box {
+  background: #fdf3ee; border: 1px solid #d24e2a; border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+.missable-box h3 { margin-top: 0; }
+.missable-box p { margin: 0.35rem 0; font-size: 0.95rem; }
+.kind-box h3 { margin-top: 0; }
+.kind-table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
+.kind-table th, .kind-table td { text-align: left; padding: 0.2rem 0.5rem 0.2rem 0; border-bottom: 1px solid #e5ded0; }
+.kind-table th { color: #626a75; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
 .about { color: #3a4048; font-size: 0.95rem; }
 .about ul { padding-left: 1.25rem; }
 
@@ -112,4 +145,6 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
   .guide-col { position: static; max-height: none; }
   .kpi { grid-template-columns: 1fr 1fr; }
   .site-header { flex-direction: column; gap: 0.5rem; }
+  .steps, .roadmap-grid { grid-template-columns: 1fr; }
+  .kpi-num { white-space: normal; }
 }

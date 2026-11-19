@@ -8,11 +8,12 @@ An offline tracker and guide for all 55 PlayStation 5 trophies of Grand Theft Au
 
 ## What it does
 
-- **Checklist** — tick trophies off; progress is saved in the browser (localStorage) and can be exported to JSON and imported back.
-- **Filters** — search by name or description, filter by kind (story, side story, activities, robbery, combat, exploration, collectibles, money, misc, platinum path), by grade, and by earned / not earned; a "missable only" switch.
-- **Spoiler setting** — story trophies stay hidden ("Hidden trophy — earn it to reveal") until earned, unless you turn spoilers on. Hidden trophies cannot be ticked before they are revealed.
-- **Guide for every trophy** — written in this guide's own words, with the official description labelled as such and a Sources line naming the public guides each fact comes from. Where no source has pinned down a method, the guide says so instead of guessing.
-- **Roadmap to platinum** — 3 steps (story + chapter saves, 100% completion + challenges, robbery/money/misc cleanup), the one potentially missable trophy flagged (Positive Mental Attitude — meditate at the Chapter 1 balcony spot), and the rules that protect your run (cheats disable trophies, no mission replay, no difficulty trophy).
+- **Checklist** — tick trophies off; progress is saved in the browser (localStorage) and can be exported to JSON and imported back. Every row shows its target (for example "250 stunts"), so you can see the size of each job at a glance.
+- **Progress at a glance** — KPI cards (earned x/55, percent toward platinum, remaining by grade, missable left) plus a progress bar, and a "Next up" line that names the cheapest unearned trophy.
+- **Filters** — search by name, description, target or timing; filter by kind (story, side story, activities, robbery, combat, exploration, collectibles, money, misc, platinum path), by grade, and by earned / not earned; a "missable only" switch. Filters are shareable as URL parameters, for example `?kind=robbery&grade=silver` or `?q=stunt`.
+- **Spoiler setting** — story trophies stay hidden ("Hidden trophy — earn it to reveal") until earned, unless you turn spoilers on (`?spoilers=on`). Hidden trophies cannot be ticked before they are revealed.
+- **Guide for every trophy** — written in this guide's own words, with the official description labelled as such, a target line and a "when" line (which chapter or stage unlocks it), and a Sources line naming the public guides each fact comes from. Concrete counts, unlock conditions and in-game tracking menus come from PowerPyx's roadmap. Where no source has pinned down a method, the guide says so instead of guessing — only 4 of 55 trophies are still unconfirmed, and the guide says which ones and what they are believed to be.
+- **Roadmap to platinum** — 3 steps as cards (story + chapter saves, 100% completion + challenges, robbery/money/misc cleanup) with hours and trophy counts, the one potentially missable trophy flagged (Positive Mental Attitude — meditate at the Chapter 1 balcony spot, 18 spots in 10 locations), a live trophies-by-kind table, and the rules that protect your run (cheats disable trophies, no mission replay, no difficulty trophy).
 
 ## Run it offline
 
@@ -21,7 +22,7 @@ node serve.ts
 # open http://localhost:8080
 ```
 
-No build step, no dependencies. Open `app/index.html` from any static file server; the app loads nothing from outside its own folder and makes no network request while running.
+No build step, no dependencies. Open `app/index.html` from any static file server; the app loads nothing from outside its own folder and makes no network request while running. Deep links work too: `?trophy=28` opens a trophy's guide, `?kind=activities` filters the list, `?spoilers=on` reveals story trophies.
 
 ## Sources
 
