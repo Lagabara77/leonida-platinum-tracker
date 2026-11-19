@@ -11,6 +11,10 @@
 // Round 2 note: the only change from round 1 is this comment — the copy logic is
 // unchanged, so the dossier stays byte-identical for the same inputs.
 //
+// Round 3 note: copy logic still unchanged; the round-3 entry adds
+// app/data/chapters.json, which is copied along with the rest of app/ by the
+// same cpSync call below — no special handling needed.
+//
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts

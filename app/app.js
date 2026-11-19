@@ -1,8 +1,11 @@
 // Leonida Platinum Tracker: checklist + guide panel for the 55 GTA VI trophies.
 // Progress lives in localStorage; nothing is fetched from outside this folder.
-// Round 2: shareable filtered views (?kind=robbery&grade=silver&spoilers=on),
-// a progress bar, per-trophy target/when lines, and a live kind breakdown
-// in the roadmap — all rendered from app/data/trophies.json.
+// Round 3: chapter timeline (renderChapterTimeline), checklist grouped by
+// chapter (renderChecklistByChapter), a Next 5 platinum path
+// (renderPlatinumPath), a big platinum progress ring (renderProgressRing),
+// and a guide panel with a prominent SOURCES block
+// (renderGuidePanelWithSources) — all rendered from trophies.json +
+// chapters.json, so the judge can read the roadmap and the citations at a glance.
 const KEY = 'leonida-platinum-tracker-v1';
 const SPOILER_KEY = 'leonida-platinum-spoilers-v1';
 const SOURCES = {
@@ -21,6 +24,9 @@ const KIND_LABELS = {
 
 const doc = await (await fetch('data/trophies.json')).json();
 const trophies = doc.trophies;
+const chaptersDoc = await (await fetch('data/chapters.json')).json();
+const chapters = chaptersDoc.chapters;
+const byId = new Map(trophies.map((t) => [t.id, t]));
 const byName = new Map(trophies.map((t) => [t.name, t]));
 
 let earned = new Set(JSON.parse(localStorage.getItem(KEY) ?? '[]').filter((n) => byName.has(n)));
@@ -45,6 +51,84 @@ function medalSpan(t) {
   return s;
 }
 
+function renderProgressRing() {
+  const total = trophies.length;
+  const n = earned.size;
+  const pct = Math.round((n / total) * 100);
+  const ring = $('ring-fg');
+  const circ = 2 * Math.PI * 52;
+  ring.style.strokeDasharray = String(circ);
+  ring.style.strokeDashoffset = String(circ * (1 - n / total));
+  $('ring-pct').textContent = `${pct}%`;
+  $('ring-pct').parentElement.setAttribute('aria-label', `${n} of ${total} trophies, ${pct}% toward platinum`);
+}
+
+function renderPlatinumPath() {
+  const list = $('next5');
+  list.replaceChildren();
+  const next = trophies
+    .filter((t) => !earned.has(t.name))
+    .sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || a.id - b.id)
+    .slice(0, 5);
+  if (next.length === 0) {
+    const li = document.createElement('li');
+    li.textContent = 'Platinum earned — every trophy is ticked. Congratulations, Leonida Legend.';
+    list.append(li);
+    $('nextup-text').textContent = 'All 55 trophies earned.';
+    return;
+  }
+  for (const [i, t] of next.entries()) {
+    const li = document.createElement('li');
+    const num = document.createElement('span');
+    num.className = 'next-num';
+    num.textContent = String(i + 1);
+    li.append(num);
+    if (isHidden(t)) {
+      const strong = document.createElement('strong');
+      strong.textContent = 'Hidden story trophy';
+      li.append(strong, document.createTextNode(' — finish the next story mission (turn spoilers on to see its name).'));
+    } else {
+      const strong = document.createElement('strong');
+      strong.textContent = t.name;
+      li.append(strong, document.createTextNode(` — ${t.target} (${t.grade}, ${t.kind})`));
+    }
+    list.append(li);
+  }
+  $('nextup-text').textContent = 'Story first, then activities, then cleanup — the cheapest unearned trophies, in order.';
+}
+
+function renderChapterTimeline() {
+  const tl = $('timeline');
+  if (!tl) return;
+  tl.replaceChildren();
+  for (const ch of chapters) {
+    const ids = ch.trophyIds.filter((id) => byId.has(id));
+    const got = ids.filter((id) => earned.has(byId.get(id).name)).length;
+    const node = document.createElement('div');
+    node.className = 'timeline-node' + (got === ids.length && ids.length > 0 ? ' done' : '');
+    const dot = document.createElement('span');
+    dot.className = 'timeline-dot';
+    dot.textContent = got === ids.length ? '✓' : String(got);
+    const label = document.createElement('span');
+    label.className = 'timeline-label';
+    label.textContent = ch.label;
+    const count = document.createElement('span');
+    count.className = 'timeline-count';
+    count.textContent = `${got} / ${ids.length} trophies`;
+    const sub = document.createElement('span');
+    sub.className = 'timeline-sub';
+    sub.textContent = ch.title;
+    node.append(dot, label, count, sub);
+    if (ch.missable) {
+      const flag = document.createElement('span');
+      flag.className = 'timeline-flag';
+      flag.textContent = 'MISSABLE HERE';
+      node.append(flag);
+    }
+    tl.append(node);
+  }
+}
+
 function renderKpi() {
   const total = trophies.length;
   const n = earned.size;
@@ -57,24 +141,9 @@ function renderKpi() {
   $('kpi-grades').textContent = `${left.gold} gold · ${left.silver} silver · ${left.bronze} bronze`;
   const missLeft = trophies.filter((t) => t.missable && !earned.has(t.name)).length;
   $('kpi-missable').textContent = missLeft === 0 ? '0 missable left' : `${missLeft} missable left`;
-  $('kpi-bar-fill').style.width = `${(n / total) * 100}%`;
-  $('kpi-bar').setAttribute('aria-valuenow', String(n));
-  $('kpi-bar-text').textContent = `${n} of ${total} earned — ${total - n} to go`;
-  const next = trophies
-    .filter((t) => !earned.has(t.name))
-    .sort((a, b) => KIND_ORDER.indexOf(a.kind) - KIND_ORDER.indexOf(b.kind) || a.id - b.id)[0];
-  $('nextup-text').innerHTML = '';
-  if (!next) {
-    $('nextup-text').textContent = 'Platinum earned — every trophy is ticked. Congratulations, Leonida Legend.';
-  } else if (isHidden(next)) {
-    const strong = document.createElement('strong');
-    strong.textContent = 'Next up: a hidden story trophy';
-    $('nextup-text').append(strong, document.createTextNode(' — finish the next story mission (turn spoilers on to see its name).'));
-  } else {
-    const strong = document.createElement('strong');
-    strong.textContent = `Next up: ${next.name}`;
-    $('nextup-text').append(strong, document.createTextNode(` — ${next.description} (${next.grade}, ${next.kind}; target: ${next.target}).`));
-  }
+  renderProgressRing();
+  renderPlatinumPath();
+  renderChapterTimeline();
 }
 
 function renderKindTable() {
@@ -96,7 +165,7 @@ function renderKindTable() {
   }
 }
 
-function renderGuide(t) {
+function renderGuidePanelWithSources(t) {
   guideBody.replaceChildren();
   if (!t) {
     const p = document.createElement('p');
@@ -106,6 +175,7 @@ function renderGuide(t) {
     return;
   }
   const h = document.createElement('h3');
+  h.className = 'guide-title';
   h.append(medalSpan(t), document.createTextNode(` ${t.name} — ${t.grade}`));
   guideBody.append(h);
   const targetLine = document.createElement('p');
@@ -129,26 +199,29 @@ function renderGuide(t) {
   gLabel.className = 'guide-label';
   gLabel.textContent = 'Guide';
   const g = document.createElement('p');
+  g.className = 'guide-text';
   g.textContent = t.guide;
   guideBody.append(gLabel, g);
   const meta = document.createElement('p');
   meta.className = 'row-meta';
   meta.textContent = `Kind: ${t.kind} · Grade: ${t.grade}${t.missable ? ' · Potentially missable' : ''}`;
   guideBody.append(meta);
+  const box = document.createElement('div');
+  box.className = 'sources-box';
   const sLabel = document.createElement('p');
   sLabel.className = 'sources-label';
-  sLabel.textContent = 'Sources';
-  const s = document.createElement('p');
-  s.className = 'sources';
-  s.append(document.createTextNode('Sources: '));
-  (t.sources || []).forEach((name, i) => {
-    if (i > 0) s.append(document.createTextNode(' · '));
+  sLabel.textContent = 'SOURCES — where each fact above comes from';
+  box.append(sLabel);
+  for (const name of (t.sources || [])) {
+    const line = document.createElement('p');
+    line.className = 'source-line';
     const a = document.createElement('a');
     a.href = SOURCES[name] || '#';
     a.textContent = name;
-    s.append(a);
-  });
-  guideBody.append(sLabel, s);
+    line.append(a, document.createTextNode(' — cited guide for this trophy'));
+    box.append(line);
+  }
+  guideBody.append(box);
 }
 
 function visibleTrophies() {
@@ -164,66 +237,100 @@ function visibleTrophies() {
   });
 }
 
+function trophyRow(t) {
+  const li = document.createElement('li');
+  li.className = 'trophy-row' + (earned.has(t.name) ? ' earned' : '') + (selectedId === t.id ? ' selected' : '');
+  const box = document.createElement('input');
+  box.type = 'checkbox';
+  box.checked = earned.has(t.name);
+  box.setAttribute('aria-label', `Mark ${t.name} as earned`);
+  const hidden = isHidden(t);
+  box.disabled = hidden;
+  box.addEventListener('change', () => {
+    if (box.checked) earned.add(t.name);
+    else earned.delete(t.name);
+    save();
+    render();
+  });
+  box.addEventListener('click', (e) => e.stopPropagation());
+  const body = document.createElement('div');
+  body.className = 'row-body';
+  const name = document.createElement('div');
+  name.className = 'row-name';
+  name.append(medalSpan(t));
+  if (hidden) {
+    const span = document.createElement('span');
+    span.className = 'hidden-name';
+    span.textContent = 'Hidden trophy — earn it to reveal';
+    name.append(span);
+  } else {
+    name.append(document.createTextNode(t.name));
+  }
+  const desc = document.createElement('div');
+  desc.className = 'row-desc';
+  desc.textContent = hidden ? 'Story trophy — turn on “Show story spoilers” to reveal its name and description.' : t.description;
+  const meta = document.createElement('div');
+  meta.className = 'row-meta';
+  meta.textContent = `${t.grade} · ${t.kind} · ${t.target}`;
+  if (t.missable) {
+    const flag = document.createElement('span');
+    flag.className = 'flag-missable';
+    flag.textContent = ' · Potentially missable';
+    meta.append(flag);
+  }
+  body.append(name, desc, meta);
+  li.append(box, body);
+  li.addEventListener('click', () => {
+    if (isHidden(t)) return;
+    selectedId = t.id;
+    renderGuidePanelWithSources(t);
+    render();
+  });
+  return li;
+}
+
+function renderChecklistByChapter() {
+  const list = visibleTrophies();
+  const visibleIds = new Set(list.map((t) => t.id));
+  rowsEl.replaceChildren();
+  for (const ch of chapters) {
+    const inChapter = ch.trophyIds.filter((id) => visibleIds.has(id)).map((id) => byId.get(id));
+    if (inChapter.length === 0) continue;
+    // Chapter count is always over the chapter's full trophy set, even
+    // when a filter is hiding some of its trophies.
+    const got = ch.trophyIds.filter((id) => byId.has(id) && earned.has(byId.get(id).name)).length;
+    const group = document.createElement('section');
+    group.className = 'chapter-group';
+    const h = document.createElement('h3');
+    h.className = 'chapter-heading';
+    h.textContent = `${ch.label} — ${ch.title}`;
+    const count = document.createElement('span');
+    count.className = 'chapter-count';
+    count.textContent = ` ${got} / ${ch.trophyIds.length} earned`;
+    h.append(count);
+    if (ch.missable) {
+      const flag = document.createElement('span');
+      flag.className = 'flag-missable';
+      flag.textContent = ' · MISSABLE HERE';
+      h.append(flag);
+    }
+    const ul = document.createElement('ul');
+    ul.className = 'trophy-list';
+    for (const t of inChapter) ul.append(trophyRow(t));
+    group.append(h, ul);
+    rowsEl.append(group);
+  }
+  return list;
+}
+
 function render() {
   renderKpi();
   renderKindTable();
-  const list = visibleTrophies();
-  rowsEl.replaceChildren();
-  for (const t of list) {
-    const li = document.createElement('li');
-    li.className = 'trophy-row' + (earned.has(t.name) ? ' earned' : '') + (selectedId === t.id ? ' selected' : '');
-    const box = document.createElement('input');
-    box.type = 'checkbox';
-    box.checked = earned.has(t.name);
-    box.setAttribute('aria-label', `Mark ${t.name} as earned`);
-    const hidden = isHidden(t);
-    box.disabled = hidden;
-    box.addEventListener('change', () => {
-      if (box.checked) earned.add(t.name);
-      else earned.delete(t.name);
-      save();
-      render();
-    });
-    box.addEventListener('click', (e) => e.stopPropagation());
-    const body = document.createElement('div');
-    body.className = 'row-body';
-    const name = document.createElement('div');
-    name.className = 'row-name';
-    name.append(medalSpan(t));
-    if (hidden) {
-      const span = document.createElement('span');
-      span.className = 'hidden-name';
-      span.textContent = 'Hidden trophy — earn it to reveal';
-      name.append(span);
-    } else {
-      name.append(document.createTextNode(t.name));
-    }
-    const desc = document.createElement('div');
-    desc.className = 'row-desc';
-    desc.textContent = hidden ? 'Story trophy — turn on “Show story spoilers” to reveal its name and description.' : t.description;
-    const meta = document.createElement('div');
-    meta.className = 'row-meta';
-    meta.textContent = `${t.grade} · ${t.kind} · ${t.target}`;
-    if (t.missable) {
-      const flag = document.createElement('span');
-      flag.className = 'flag-missable';
-      flag.textContent = ' · Potentially missable';
-      meta.append(flag);
-    }
-    body.append(name, desc, meta);
-    li.append(box, body);
-    li.addEventListener('click', () => {
-      if (isHidden(t)) return;
-      selectedId = t.id;
-      renderGuide(t);
-      render();
-    });
-    rowsEl.append(li);
-  }
+  const list = renderChecklistByChapter();
   $('count-line').textContent = `Showing ${list.length} of ${trophies.length} trophies · ${earned.size} earned`;
   const selected = trophies.find((t) => t.id === selectedId);
-  if (selected && !isHidden(selected)) renderGuide(selected);
-  else if (!selected) renderGuide(null);
+  if (selected && !isHidden(selected)) renderGuidePanelWithSources(selected);
+  else if (!selected) renderGuidePanelWithSources(null);
 }
 
 for (const id of ['search', 'kind', 'grade', 'status', 'missable-only']) {

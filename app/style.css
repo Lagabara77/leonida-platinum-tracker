@@ -1,7 +1,8 @@
 /* Leonida Platinum Tracker — paper theme, system fonts only, offline. */
-/* Round 2: progress bar under the KPI cards, roadmap step cards + kind table,
-   target line in the guide panel, tighter header/controls so the cover shows
-   more guide text at 1280x800. */
+/* Round 3: big platinum ring in the header, Next 5 platinum path, a
+   horizontal chapter timeline, checklist grouped by chapter, and a guide
+   panel with larger type plus a prominent SOURCES box — built so every
+   screenshot stays readable at a glance when shrunk. */
 * { box-sizing: border-box; }
 html { font-size: 16px; }
 body {
@@ -17,40 +18,44 @@ a { color: #a03a1a; }
 a:focus, button:focus, input:focus, select:focus { outline: 3px solid #d24e2a; outline-offset: 2px; }
 button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 
-.site-header {
-  display: flex; gap: 2rem; justify-content: space-between; align-items: flex-start;
-  padding: 1.25rem 2rem 0.75rem; max-width: 1280px; margin: 0 auto;
+.site-header { padding: 1.25rem 2rem 0.5rem; max-width: 1280px; margin: 0 auto; }
+.hero { display: flex; gap: 1.25rem; align-items: center; }
+.ring-wrap { position: relative; flex: none; width: 120px; height: 120px; }
+.ring { display: block; transform: rotate(-90deg); }
+.ring-bg { fill: none; stroke: #e5ded0; stroke-width: 11; }
+.ring-fg { fill: none; stroke: #d24e2a; stroke-width: 11; stroke-linecap: round; }
+.ring-text {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
 }
+.ring-pct { font-size: 1.5rem; font-weight: 800; line-height: 1.1; }
+.ring-label { font-size: 0.75rem; color: #626a75; }
 .subtitle { margin: 0; color: #3a4048; max-width: 60rem; }
-.badge-note { margin: 0; color: #626a75; font-size: 0.9rem; max-width: 22rem; }
+.badge-note { margin: 0.35rem 0 0; color: #626a75; font-size: 0.9rem; max-width: 60rem; }
 
 .kpi {
   display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.75rem;
-  max-width: 1280px; margin: 0 auto; padding: 0 2rem;
+  max-width: 1280px; margin: 0.75rem auto 0; padding: 0 2rem;
 }
 .kpi-card {
   background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px;
   padding: 0.75rem 1rem; display: flex; flex-direction: column; gap: 0.15rem;
 }
 .kpi-card.warn { border-color: #d24e2a; }
-.kpi-num { font-size: 1.2rem; font-weight: 700; white-space: nowrap; }
+.kpi-num { font-size: 1.25rem; font-weight: 700; white-space: nowrap; }
 .kpi-label { color: #626a75; font-size: 0.9rem; }
-
-.progress-wrap {
-  max-width: 1280px; margin: 0.6rem auto 0; padding: 0 2rem;
-  display: flex; align-items: center; gap: 0.75rem;
-}
-.progress-bar {
-  flex: 1; height: 12px; background: #e5ded0; border-radius: 6px; overflow: hidden;
-  border: 1px solid #ddd5c8;
-}
-.progress-fill { height: 100%; width: 0; background: #d24e2a; transition: width 0.2s; }
-.progress-text { color: #626a75; font-size: 0.9rem; white-space: nowrap; }
 
 .nextup, .controls, .count-line { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
 .nextup { margin-top: 0.75rem; background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 0.75rem 1.25rem; }
-.nextup p { margin: 0; }
-.nextup strong { color: #a03a1a; }
+.nextup h2 { margin-bottom: 0.25rem; }
+.next5 { margin: 0; padding-left: 0; list-style: none; }
+.next5 li { padding: 0.2rem 0; font-size: 1.05rem; }
+.next5 strong { color: #a03a1a; }
+.next-num {
+  display: inline-block; width: 1.6rem; height: 1.6rem; line-height: 1.6rem; text-align: center;
+  background: #d24e2a; color: #fff; border-radius: 50%; font-weight: 700; margin-right: 0.5rem; font-size: 0.95rem;
+}
+.next5-note { margin: 0.35rem 0 0; color: #626a75; font-size: 0.9rem; }
 
 .controls {
   display: flex; flex-wrap: wrap; gap: 0.6rem; align-items: end;
@@ -76,6 +81,9 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 }
 .list-col h2, .guide-col h2 { margin-top: 0; }
 .hint { color: #626a75; font-size: 0.9rem; margin: 0 0 0.75rem; }
+.chapter-group { margin-bottom: 1rem; }
+.chapter-heading { font-size: 1.15rem; margin: 0 0 0.5rem; }
+.chapter-count { color: #a03a1a; font-family: -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; font-size: 0.95rem; font-weight: 700; }
 .trophy-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0.5rem; }
 .trophy-row {
   background: #ffffff; border: 1px solid #ddd5c8; border-radius: 6px;
@@ -106,15 +114,42 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
   border-radius: 14px; padding: 1rem 1.25rem; max-height: calc(100vh - 2rem); overflow: auto;
 }
 .guide-col .placeholder { color: #626a75; }
-.guide-col .official { color: #3a4048; }
-.guide-col .official-label, .guide-col .guide-label, .guide-col .sources-label {
-  font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #626a75; margin: 0.9rem 0 0.2rem;
+.guide-title { font-size: 1.35rem; margin: 0 0 0.25rem; }
+.guide-col .official { color: #3a4048; font-size: 1.05rem; }
+.guide-col .official-label, .guide-col .guide-label {
+  font-size: 0.9rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: #626a75; margin: 0.9rem 0 0.2rem;
 }
 .guide-col p { margin: 0.2rem 0 0.5rem; }
-.guide-col .sources { font-size: 0.9rem; }
-.guide-col .sources a { margin-right: 0.5rem; }
-.guide-note { background: #fdf3ee; border: 1px solid #d24e2a; border-radius: 6px; padding: 0.6rem 0.75rem; }
-.target-line { font-size: 0.9rem; font-weight: 700; color: #a03a1a; }
+.guide-text { font-size: 1.1rem; line-height: 1.6; color: #1d2129; }
+.guide-note { background: #fdf3ee; border: 1px solid #d24e2a; border-radius: 6px; padding: 0.6rem 0.75rem; font-size: 1rem; }
+.target-line { font-size: 1rem; font-weight: 700; color: #a03a1a; }
+.sources-box {
+  background: #fdf3ee; border: 2px solid #d24e2a; border-radius: 10px;
+  padding: 0.75rem 1rem; margin-top: 1rem;
+}
+.sources-box .sources-label {
+  font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  color: #a03a1a; margin: 0 0 0.4rem;
+}
+.source-line { font-size: 1rem; margin: 0.25rem 0; }
+.source-line a { font-weight: 700; }
+
+.timeline {
+  display: flex; gap: 0.5rem; margin: 0.75rem 0 0.5rem;
+}
+.timeline-node {
+  flex: 1; background: #f6f3ee; border: 1px solid #ddd5c8; border-radius: 12px;
+  padding: 0.6rem 0.6rem 0.7rem; text-align: center; display: flex; flex-direction: column; gap: 0.1rem; align-items: center;
+}
+.timeline-node.done { border-color: #d24e2a; background: #fdf3ee; }
+.timeline-dot {
+  width: 2rem; height: 2rem; line-height: 2rem; border-radius: 50%;
+  background: #d24e2a; color: #fff; font-weight: 800; font-size: 1rem;
+}
+.timeline-label { font-weight: 800; font-size: 1rem; }
+.timeline-count { font-size: 0.95rem; font-weight: 700; color: #a03a1a; }
+.timeline-sub { font-size: 0.85rem; color: #626a75; line-height: 1.3; }
+.timeline-flag { font-size: 0.8rem; font-weight: 800; color: #a03a1a; }
 
 .roadmap, .about { max-width: 1280px; margin: 2rem auto 0; padding: 0 2rem 2rem; }
 .roadmap { background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 1.25rem 1.5rem; }
@@ -144,7 +179,9 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
   .layout { grid-template-columns: 1fr; }
   .guide-col { position: static; max-height: none; }
   .kpi { grid-template-columns: 1fr 1fr; }
-  .site-header { flex-direction: column; gap: 0.5rem; }
+  .hero { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
   .steps, .roadmap-grid { grid-template-columns: 1fr; }
+  .timeline { flex-wrap: wrap; }
+  .timeline-node { flex: 1 1 30%; }
   .kpi-num { white-space: normal; }
 }
