@@ -3,23 +3,117 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GTA VI trophy checklist</title>
+<title>Leonida Platinum Tracker — GTA VI Trophy Guide</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23d24e2a'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23f6f3ee'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header>
-  <h1>GTA VI trophy checklist</h1>
-  <p id="progress">0 of 55 earned</p>
+<header class="site-header">
+  <div>
+    <h1>Leonida Platinum Tracker</h1>
+    <p class="subtitle">GTA VI Trophy Guide — all 55 PlayStation 5 trophies: 1 Platinum, 2 Gold, 6 Silver, 46 Bronze. 0 online trophies. About 200 hours to platinum. Difficulty 4/10. One playthrough, no difficulty trophy, no mission replay — cheats disable trophies.</p>
+  </div>
+  <p class="badge-note">Names, descriptions &amp; grades exactly as PlayStation publishes them. Rockstar never published the list itself.</p>
 </header>
-<div class="controls">
-  <label>Grade <select id="grade"><option value="all">All</option><option value="platinum">Platinum</option><option value="gold">Gold</option><option value="silver">Silver</option><option value="bronze">Bronze</option></select></label>
+
+<section class="kpi" aria-label="Progress summary">
+  <div class="kpi-card"><span class="kpi-num" id="kpi-earned">0 / 55</span><span class="kpi-label">trophies earned</span></div>
+  <div class="kpi-card"><span class="kpi-num" id="kpi-pct">0%</span><span class="kpi-label">toward platinum</span></div>
+  <div class="kpi-card"><span class="kpi-num" id="kpi-grades">0 gold · 0 silver · 0 bronze left</span><span class="kpi-label">remaining by grade</span></div>
+  <div class="kpi-card warn"><span class="kpi-num" id="kpi-missable">1 missable left</span><span class="kpi-label">potentially missable, not earned</span></div>
+</section>
+
+<section class="nextup" aria-label="Next up">
+  <h2>Next up</h2>
+  <p id="nextup-text">Select a trophy below, or tick one off to update this plan.</p>
+</section>
+
+<section class="controls" aria-label="Filters and progress tools">
+  <label>Search <input id="search" type="search" placeholder="Search name or description" aria-label="Search trophies"></label>
+  <label>Kind
+    <select id="kind" aria-label="Filter by kind">
+      <option value="all">All kinds</option>
+      <option value="story">Story</option>
+      <option value="side-story">Side story</option>
+      <option value="activities">Activities</option>
+      <option value="robbery">Robbery</option>
+      <option value="combat">Combat</option>
+      <option value="exploration">Exploration</option>
+      <option value="collectibles">Collectibles</option>
+      <option value="money">Money</option>
+      <option value="misc">Misc</option>
+      <option value="platinum">Platinum path</option>
+    </select>
+  </label>
+  <label>Grade
+    <select id="grade" aria-label="Filter by grade">
+      <option value="all">All grades</option>
+      <option value="platinum">Platinum</option>
+      <option value="gold">Gold</option>
+      <option value="silver">Silver</option>
+      <option value="bronze">Bronze</option>
+    </select>
+  </label>
+  <label>Status
+    <select id="status" aria-label="Filter by status">
+      <option value="all">All</option>
+      <option value="earned">Earned</option>
+      <option value="not">Not earned</option>
+    </select>
+  </label>
+  <label class="check"><input id="missable-only" type="checkbox"> Missable only</label>
+  <label class="check"><input id="spoiler" type="checkbox"> Show story spoilers</label>
   <button id="export" type="button">Export progress</button>
-  <label class="import">Import progress <input id="import" type="file" accept="application/json"></label>
-</div>
-<table>
-  <thead><tr><th>Earned</th><th>Trophy</th><th>Grade</th><th>How to get it</th></tr></thead>
-  <tbody id="rows"></tbody>
-</table>
+  <label class="import-btn">Import progress <input id="import" type="file" accept="application/json"></label>
+  <button id="reset" type="button">Reset progress</button>
+</section>
+<p class="count-line" id="count-line" aria-live="polite"></p>
+
+<main class="layout">
+  <section class="list-col" aria-label="Trophy list">
+    <h2>Trophy checklist</h2>
+    <p class="hint">Story trophies stay hidden until earned unless spoilers are on. Tick a trophy to mark it earned — progress is saved in this browser.</p>
+    <ul id="rows" class="trophy-list"></ul>
+  </section>
+
+  <aside class="guide-col" aria-label="Trophy guide" id="guide-panel">
+    <h2>Guide</h2>
+    <div id="guide-body">
+      <p class="placeholder">Select a trophy from the checklist to read its guide, official description and sources here.</p>
+    </div>
+  </aside>
+</main>
+
+<section class="roadmap" id="roadmap" aria-label="Roadmap to platinum">
+  <h2>Roadmap to platinum — about 200 hours, 1 playthrough</h2>
+  <ol class="steps">
+    <li><strong>Step 1 — Play the story, save every chapter (60–80 hours).</strong> Finish Chapters 1–5 and the final mission. Make a manual save at the start of each chapter (15 manual saves + 1 autosave exist). Before you leave Chapter 1, meditate at the balcony spot: Positive Mental Attitude is the only trophy flagged as potentially missable, and the Chapter 1 spot may not be reachable later. All other story trophies are unmissable.</li>
+    <li><strong>Step 2 — 100% completion + challenges.</strong> After the story, chase A Long Road: finish all Strangers &amp; Freaks strands (8 needed), all activities (shooting range golds, drone races, races, fishing, arcade, bowling, meditation), 50 challenges, 250 stunts, 100 vehicles discovered, full exploration of Leonida and the collectibles (3 card sets, WAiNK at 100 locations).</li>
+    <li><strong>Step 3 — Cleanup: robberies, money &amp; misc.</strong> Rob 5 bank vaults, an armored truck, 3 shops back-to-back, a jewelry store undetected and one illegal operation per gang; launder $250,000 in Marked Bills, spend $100,000, buy all garages, register 10 vehicles; then the cryptic misc trophies (Personal Best, Actions Speak Louder, Bad Luck I Guess, The Truth Is Out There) — their triggers are not yet pinned down by any source, so check the cited guides for updates instead of guessing.</li>
+  </ol>
+  <h3>Missable trophies</h3>
+  <p><strong>Positive Mental Attitude — potentially missable.</strong> Meditate at every spot across Leonida, including the balcony spot in Chapter 1. No source has confirmed the full spot list or whether the Chapter 1 spot is reachable later, so keep a Chapter 1 manual save until you confirm it. Every other trophy can be earned after the story in free roam.</p>
+  <h3>Rules that protect your run</h3>
+  <ul>
+    <li>No online trophies and no difficulty trophy — play on any difficulty.</li>
+    <li>Cheats disable trophies (and the save) — do not use them on your platinum save.</li>
+    <li>There is no mission replay and no New Game+ — chapter saves are your only rewind.</li>
+    <li>Kind and missable flags here are this guide's classification from the official descriptions, not PSN data.</li>
+  </ul>
+</section>
+
+<footer class="about">
+  <h2>About &amp; sources</h2>
+  <p>Guides are written in this tracker's own words from the official trophy descriptions and the public guides below — never copied from them. Where no source has pinned down a method, the guide says so. Trophy names, descriptions and grades are reproduced exactly as PlayStation publishes them (mirrored by Exophase and PSNProfiles); Rockstar Games has never published the list itself. This tracker is an unofficial fan guide: no Rockstar logo or official artwork is used anywhere. It works fully offline — it loads no file from outside this folder and makes no network request; source links below are plain links you may choose to follow.</p>
+  <ul>
+    <li>PowerPyx — GTA 6 Trophy Guide &amp; Roadmap: <a href="https://www.powerpyx.com/gta-6-grand-theft-auto-vi-trophy-guide-roadmap/">powerpyx.com</a></li>
+    <li>Exophase — GTA VI trophies: <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">exophase.com</a></li>
+    <li>PSNProfiles — GTA VI trophies: <a href="https://psnprofiles.com/trophies/43531-grand-theft-auto-vi">psnprofiles.com</a></li>
+    <li>OutputLag — GTA 6 trophy list: <a href="https://outputlag.com/guides/gta-6-trophy-list/">outputlag.com</a></li>
+    <li>U7BUY — GTA 6 trophies: <a href="https://www.u7buy.com/blog/gta-6-trophies/">u7buy.com</a></li>
+  </ul>
+</footer>
+
 <script type="module" src="app.js"></script>
 </body>
 </html>
