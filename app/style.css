@@ -5,7 +5,12 @@
    screenshot stays readable at a glance when shrunk.
    Round 4: off-grid margins aligned (Next 5 + roadmap padding 2rem,
    About list flush left) and the Next-5 badge darkened to #b93f1f for
-   4.5:1 contrast. */
+   4.5:1 contrast.
+   Round 5: AUDIT strip under the header (computed from the data, visible
+   on every tab), Tracker/Roadmap/Missables/Sources tabs, roadmap stat
+   cards, numbered guide steps with [n] citation markers, a two-readings
+   box for the one open question, a Missables chapter grid, and a
+   trophy×source matrix on the Sources tab. */
 * { box-sizing: border-box; }
 html { font-size: 16px; }
 body {
@@ -79,7 +84,7 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 .count-line { color: #626a75; margin-top: 0.5rem; }
 
 .layout {
-  display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 1rem;
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 1rem;
   max-width: 1280px; margin: 0.75rem auto 0; padding: 0 2rem; align-items: start;
 }
 .list-col h2, .guide-col h2 { margin-top: 0; }
@@ -173,7 +178,7 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 .missable-box p { margin: 0.35rem 0; font-size: 0.95rem; }
 .kind-box h3 { margin-top: 0; }
 .kind-table { border-collapse: collapse; width: 100%; font-size: 0.95rem; }
-.kind-table th, .kind-table td { text-align: left; padding: 0.2rem 0.5rem 0.2rem 0; border-bottom: 1px solid #e5ded0; }
+.kind-table th, .kind-table td { text-align: left; padding: 0.12rem 0.5rem 0.12rem 0; border-bottom: 1px solid #e5ded0; }
 .kind-table th { color: #626a75; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
 .about { color: #3a4048; font-size: 0.95rem; }
 .about ul { padding-left: 0; }
@@ -187,4 +192,90 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
   .timeline { flex-wrap: wrap; }
   .timeline-node { flex: 1 1 30%; }
   .kpi-num { white-space: normal; }
+}
+
+/* --- Round 5 --- */
+.audit { max-width: 1280px; margin: 0.75rem auto 0; padding: 0 2rem; }
+.audit-strip {
+  margin: 0; background: #1d2129; color: #f6f3ee; border-radius: 10px;
+  padding: 0.6rem 0.9rem; font-size: 0.95rem; font-weight: 700; line-height: 1.5;
+}
+.audit-legend { margin: 0.35rem 0 0; color: #626a75; font-size: 0.85rem; }
+
+.tabs {
+  max-width: 1280px; margin: 0.75rem auto 0; padding: 0 2rem;
+  display: flex; gap: 0.5rem; flex-wrap: wrap;
+}
+.tabs button {
+  min-height: 44px; padding: 0.5rem 1.1rem; border-radius: 6px; cursor: pointer;
+  border: 1px solid #9aa1ab; background: #ffffff; color: #1d2129;
+  font-size: 1rem; font-weight: 600;
+}
+.tabs button.active { background: #d24e2a; border-color: #a03a1a; color: #fff; }
+.tab-panel[hidden] { display: none; }
+
+.stat-cards {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.6rem;
+  margin: 0.75rem 0 0.5rem;
+}
+.stat-card {
+  background: #f6f3ee; border: 1px solid #ddd5c8; border-radius: 12px;
+  padding: 0.6rem 0.5rem; display: flex; flex-direction: column;
+  align-items: center; gap: 0.1rem; text-align: center;
+}
+.stat-num { font-size: 1.35rem; font-weight: 800; color: #a03a1a; white-space: nowrap; }
+.stat-label { font-size: 0.85rem; color: #626a75; line-height: 1.3; }
+
+.guide-steps { margin: 0.2rem 0 0.5rem; padding-left: 1.4rem; font-size: 1rem; line-height: 1.5; }
+.guide-steps li { margin-bottom: 0.35rem; }
+.cite { font-weight: 800; color: #a03a1a; white-space: nowrap; }
+.cite.uncited { color: #626a75; }
+.steps-count { font-size: 0.9rem; font-weight: 700; color: #a03a1a; margin: 0.2rem 0 0.4rem; }
+.source-num { font-weight: 800; color: #a03a1a; }
+
+.dispute-box {
+  background: #fdf3ee; border: 2px solid #d24e2a; border-radius: 10px;
+  padding: 0.75rem 1rem; margin-top: 1rem;
+}
+.dispute-box .dispute-label {
+  font-size: 1rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.04em;
+  color: #a03a1a; margin: 0 0 0.4rem;
+}
+.dispute-box p { font-size: 1rem; margin: 0.25rem 0; }
+.dispute-box .dispute-q { font-weight: 700; }
+.dispute-box .dispute-note { color: #3a4048; font-size: 0.95rem; }
+
+.panel-section {
+  max-width: 1280px; margin: 2rem auto 0; padding: 1.25rem 2rem;
+  background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px;
+}
+.panel-section h2 { margin-top: 0; }
+.missables-summary { font-size: 1.15rem; font-weight: 800; color: #a03a1a; margin: 0.25rem 0 0.5rem; }
+.missable-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+.missable-card {
+  background: #f6f3ee; border: 1px solid #ddd5c8; border-radius: 14px;
+  padding: 0.9rem 1rem;
+}
+.missable-card.danger { background: #fdf3ee; border: 2px solid #d24e2a; }
+.missable-card h3 { margin-top: 0; font-size: 1.05rem; }
+.missable-card p { margin: 0.35rem 0; font-size: 0.95rem; }
+.missable-count { font-weight: 700; color: #a03a1a; }
+.missable-flag { font-weight: 700; }
+.missable-save { font-weight: 700; }
+.missable-list { list-style: none; margin: 0.5rem 0 0; padding: 0; font-size: 0.95rem; }
+.missable-list li { padding: 0.15rem 0; }
+.missable-list li.earned { color: #626a75; text-decoration: line-through; }
+
+.matrix-wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-top: 0.75rem; }
+.matrix-table { border-collapse: collapse; width: 100%; font-size: 0.82rem; }
+.matrix-table th, .matrix-table td { text-align: left; padding: 0.08rem 0.4rem 0.08rem 0; border-bottom: 1px solid #e5ded0; }
+.matrix-table th { color: #626a75; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.matrix-cell { text-align: center; color: #a03a1a; font-weight: 800; }
+.source-counts { margin-top: 0.75rem; }
+.source-counts p { margin: 0.3rem 0; font-size: 0.95rem; }
+.source-note { color: #3a4048; }
+
+@media (max-width: 900px) {
+  .stat-cards { grid-template-columns: repeat(2, 1fr); }
+  .missable-grid, .matrix-wrap { grid-template-columns: 1fr; }
 }

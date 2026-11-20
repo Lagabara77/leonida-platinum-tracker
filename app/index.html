@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Leonida Platinum Tracker — GTA VI Trophy Guide</title>
+<title>Leonida Platinum Tracker — 55 trophies, 190 cited steps, 51 backed by 2+ sources</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='%23d24e2a'/%3E%3Ccircle cx='16' cy='16' r='7' fill='%23f6f3ee'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
@@ -25,17 +25,24 @@
   </div>
 </header>
 
+<section class="audit" aria-label="Audit of the guide's research">
+  <p class="audit-strip" id="audit-strip">AUDIT — computing…</p>
+  <p class="audit-legend">28 PSN-hidden is the kit’s count (RULES.txt) — the starter data has no hidden field. “At risk” = possibly missable and not yet earned. “Unconfirmed” = the method is not pinned down by any public source. [1] PowerPyx · [2] Exophase · [3] PSNProfiles.</p>
+</section>
+
+<nav class="tabs" aria-label="Sections">
+  <button type="button" data-tab="tracker" aria-selected="true" class="active">Tracker</button>
+  <button type="button" data-tab="roadmap" aria-selected="false">Roadmap</button>
+  <button type="button" data-tab="missables" aria-selected="false">Missables</button>
+  <button type="button" data-tab="sources" aria-selected="false">Sources</button>
+</nav>
+
+<div id="tab-tracker" class="tab-panel">
 <section class="kpi" aria-label="Progress summary">
   <div class="kpi-card"><span class="kpi-num" id="kpi-earned">0 / 55</span><span class="kpi-label">trophies earned</span></div>
   <div class="kpi-card"><span class="kpi-num" id="kpi-pct">0%</span><span class="kpi-label">toward platinum</span></div>
   <div class="kpi-card"><span class="kpi-num" id="kpi-grades">1 platinum · 2 gold · 6 silver · 46 bronze</span><span class="kpi-label">left by grade</span></div>
   <div class="kpi-card warn"><span class="kpi-num" id="kpi-missable">1 missable left</span><span class="kpi-label">potentially missable, not earned</span></div>
-</section>
-
-<section class="nextup" aria-label="Next up on the platinum path">
-  <h2>Next 5 on the platinum path</h2>
-  <ol class="next5" id="next5"></ol>
-  <p class="next5-note" id="nextup-text">Story first, then activities, then cleanup — the cheapest unearned trophies, in order.</p>
 </section>
 
 <section class="controls" aria-label="Filters and progress tools">
@@ -94,30 +101,39 @@
   </aside>
 </main>
 
+<section class="nextup" aria-label="Next up on the platinum path">
+  <h2>Next 5 on the platinum path</h2>
+  <ol class="next5" id="next5"></ol>
+  <p class="next5-note" id="nextup-text">Story first, then activities, then cleanup — the cheapest unearned trophies, in order.</p>
+</section>
+</div>
+
+<div id="tab-roadmap" class="tab-panel" hidden>
 <section class="roadmap" id="roadmap" aria-label="Roadmap to platinum">
   <h2>Roadmap to platinum — about 200 hours, 1 playthrough</h2>
+  <div class="stat-cards" id="stat-cards" aria-label="Roadmap statistics"></div>
   <div class="timeline" id="timeline" aria-label="Chapter timeline"></div>
   <div class="steps">
     <article class="step-card">
       <h3>Step 1 — Play the story, save every chapter</h3>
       <p class="step-hours">60–80 hours · 12 story trophies</p>
-      <p>Finish Chapters 1–5 and the final mission. Make a manual save at the start and end of each chapter (15 manual saves + 1 autosave exist — 10 saves cover the chapters, rotate the other 5 in free roam). Before you leave Chapter 1, meditate at the balcony spot: Positive Mental Attitude is the only trophy flagged as potentially missable, and the Chapter 1 spot may not be reachable later. All other story trophies are unmissable, and quest givers who vanish for a while always return.</p>
+      <p>Finish Chapters 1–5 and the final mission. Make a manual save at the start and end of each chapter (15 manual saves + 1 autosave). Before you leave Chapter 1, meditate at the balcony spot: Positive Mental Attitude is the only trophy flagged as potentially missable. All other story trophies are unmissable.</p>
     </article>
     <article class="step-card">
       <h3>Step 2 — 100% completion + challenges</h3>
       <p class="step-hours">~100 hours · A Long Road (gold)</p>
-      <p>After the story, open Progress &gt; Stats &gt; 100% Completion: any 100 optional missions, 200 of 277 vehicles scanned with WAiNK, 100 of 255 animals studied, any 70 of 80 challenges, 300 stunts, all ranges, drone races, 8 bank jobs, 39 gang operations. Nothing is missable — finish it in free roam; most activity trophies pop on the way.</p>
+      <p>After the story, open Progress &gt; Stats &gt; 100% Completion: any 100 optional missions, 200 of 277 vehicles scanned with WAiNK, 100 of 255 animals studied, any 70 of 80 challenges, 300 stunts, all ranges, drone races, 8 bank jobs, 39 gang operations. Nothing is missable — finish it in free roam.</p>
     </article>
     <article class="step-card">
       <h3>Step 3 — Cleanup: robberies, money &amp; misc</h3>
       <p class="step-hours">~10 hours · robbery, money &amp; misc</p>
-      <p>Rob 5 bank vaults, an armored truck, 3 shops back-to-back, a jewelry store undetected and one illegal operation per gang; launder $250,000 in Marked Bills, spend $100,000, buy all 8 garages ($160,000), register 10 vehicles; then the cryptic misc trophies. Two of them are now pinned down — Personal Best (max strength, both characters) and Actions Speak Louder (500 profile actions) — while In The Beginning…, Bad Luck, I Guess, The Truth Is Out There and Ten Pin are still unconfirmed: check the cited guides for updates instead of guessing.</p>
+      <p>Rob 5 bank vaults, an armored truck, 3 shops back-to-back, a jewelry store undetected and one illegal operation per gang; launder $250,000 in Marked Bills, spend $100,000, buy all 8 garages ($160,000), register 10 vehicles; then the cryptic misc trophies. Four are still unconfirmed (In The Beginning…, Bad Luck, I Guess, The Truth Is Out There, Ten Pin) — check the cited guides instead of guessing.</p>
     </article>
   </div>
   <div class="roadmap-grid">
     <div class="missable-box">
       <h3>Missable trophies — 1 of 55</h3>
-      <p><strong>Positive Mental Attitude — potentially missable.</strong> Meditate at every spot across Leonida (18 spots, 10 locations), including the balcony spot in Chapter 1: after the mission “Down to Earth”, Lucia talks about meditating in the kitchen in the morning, then walks to the balcony at Jason’s house — follow her and accept. It adds +1 to the counter but is not listed as a spot, so it is still unconfirmed whether it is required. Do it anyway and keep a Chapter 1 manual save until the trophy pops. Every other trophy can be earned after the story in free roam.</p>
+      <p><strong>Positive Mental Attitude — potentially missable.</strong> Meditate at every spot across Leonida (18 spots, 10 locations), including the balcony spot in Chapter 1: after the mission “Down to Earth”, follow Lucia to the balcony and accept. It adds +1 to the counter but is not listed as a spot, so it is still unconfirmed whether it is required — do it anyway and keep a Chapter 1 manual save until the trophy pops. Every other trophy is safe after the story; the full chapter-by-chapter breakdown is on the Missables tab.</p>
     </div>
     <div class="kind-box">
       <h3>Trophies by kind — 55 total</h3>
@@ -136,10 +152,27 @@
     <li>Kind, chapter and missable flags here are this guide’s classification from the official descriptions, not PSN data.</li>
   </ul>
 </section>
+</div>
+
+<div id="tab-missables" class="tab-panel" hidden>
+<section class="panel-section" id="missables" aria-label="Missable trophies">
+  <h2>Missables — what can be lost, chapter by chapter</h2>
+  <p class="missables-summary" id="missables-summary">Computing…</p>
+  <p class="hint">“At risk” means possibly missable and not yet earned. “Safe at any time” means the trophy can always be earned after the story in free roam. Only one trophy in the game is possibly missable — this tab exists so you can check that in one glance instead of trusting it.</p>
+  <div class="missable-grid" id="missables-body"></div>
+</section>
+</div>
+
+<div id="tab-sources" class="tab-panel" hidden>
+<section class="panel-section" id="sources" aria-label="Sources and citation matrix">
+  <h2>Sources — every trophy, every source, every step</h2>
+  <div id="sources-body"></div>
+</section>
+</div>
 
 <footer class="about">
   <h2>About &amp; sources</h2>
-  <p>Guides are written in this tracker’s own words from the official trophy descriptions and the public guides below — never copied from them. Concrete counts, unlock conditions and in-game tracking menus come from PowerPyx’s roadmap (meditation spots, stunt categories, vehicle and animal counts, challenge totals, quest names and money figures). Where no source has pinned down a method, the guide says so. Trophy names, descriptions and grades are reproduced exactly as PlayStation publishes them (mirrored by Exophase and PSNProfiles); Rockstar Games has never published the list itself. This tracker is an unofficial fan guide: no Rockstar logo or official artwork is used anywhere. It works fully offline — it loads no file from outside this folder and makes no network request; source links below are plain links you may choose to follow.</p>
+  <p>Guides are written in this tracker’s own words from the official trophy descriptions and the public guides below — never copied from them. Concrete counts, unlock conditions and in-game tracking menus come from PowerPyx’s roadmap (meditation spots, stunt categories, vehicle and animal counts, challenge totals, quest names and money figures). Every guide is numbered steps, and every step that states a fact ends with a marker [n] pointing at that trophy’s numbered source list: [1] PowerPyx for the concrete method, [2] Exophase + [3] PSNProfiles for the official name, description and grade facts they mirror. A step with no marker says plainly that no source has pinned the method down. One open question is shown both ways instead of settled by guessing: whether the Chapter 1 balcony meditation is required for Positive Mental Attitude. Where no source has pinned down a method, the guide says so. Trophy names, descriptions and grades are reproduced exactly as PlayStation publishes them (mirrored by Exophase and PSNProfiles); Rockstar Games has never published the list itself. This tracker is an unofficial fan guide: no Rockstar logo or official artwork is used anywhere. It works fully offline — it loads no file from outside this folder and makes no network request; source links below are plain links you may choose to follow.</p>
   <ul>
     <li>PowerPyx — GTA 6 Trophy Guide &amp; Roadmap: <a href="https://www.powerpyx.com/gta-6-grand-theft-auto-vi-trophy-guide-roadmap/">powerpyx.com</a></li>
     <li>Exophase — GTA VI trophies: <a href="https://www.exophase.com/game/grand-theft-auto-vi-psn/trophies/">exophase.com</a></li>

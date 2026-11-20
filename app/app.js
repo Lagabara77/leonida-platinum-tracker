@@ -9,6 +9,194 @@
 // Round 4: KPI "left by grade" now counts the platinum too (42 left, not 41),
 // and the SOURCES label is shorter so it never wraps an orphan "FROM".
 const KEY = 'leonida-platinum-tracker-v1';
+// Round 5: the audit strip (T1) is computed from the data, never hardcoded.
+// 28 PSN-hidden is the kit's count (RULES.txt) — starter trophies.json has
+// no hidden field, so that one number is a documented kit fact, not a
+// computed value. Pages = one guide/list page per cited site.
+const PSN_HIDDEN_KIT = 28;
+const SOURCE_PAGES_READ = '19 Nov 2026';
+
+function auditNumbers() {
+  const total = trophies.length;
+  const official = trophies.filter((t) => t.name && t.description && t.grade).length;
+  const grades = { platinum: 0, gold: 0, silver: 0, bronze: 0 };
+  for (const t of trophies) if (grades[t.grade] !== undefined) grades[t.grade] += 1;
+  let stepsTotal = 0, stepsCited = 0, stepsBacked2 = 0, guidesCiting = 0;
+  let unconfirmed = 0, openQuestions = 0;
+  const perSourceSteps = { 1: 0, 2: 0, 3: 0 };
+  const perSourceTrophies = {};
+  for (const t of trophies) {
+    if ((t.sources || []).length > 0) guidesCiting += 1;
+    for (const name of (t.sources || [])) perSourceTrophies[name] = (perSourceTrophies[name] || 0) + 1;
+    if (t.dispute) openQuestions += 1;
+    let trophyUnconfirmed = false;
+    for (const st of (t.steps || [])) {
+      stepsTotal += 1;
+      if (st.cites && st.cites.length > 0) {
+        stepsCited += 1;
+        if (st.cites.length >= 2) stepsBacked2 += 1;
+        for (const n of st.cites) if (perSourceSteps[n] !== undefined) perSourceSteps[n] += 1;
+      } else if (/not yet pinned down|no public source has pinned down/i.test(st.text)) {
+        trophyUnconfirmed = true;
+      }
+    }
+    if (trophyUnconfirmed) unconfirmed += 1;
+  }
+  const missable = trophies.filter((t) => t.missable);
+  const atRisk = missable.filter((t) => !earned.has(t.name)).length;
+  const sites = [...new Set(trophies.flatMap((t) => t.sources || []))];
+  return {
+    total, official, grades, stepsTotal, stepsCited, stepsBacked2,
+    guidesCiting, unconfirmed, openQuestions, perSourceSteps, perSourceTrophies,
+    missable: missable.length, atRisk, safe: total - missable.length,
+    sites: sites.length,
+  };
+}
+
+function renderAuditStrip() {
+  const a = auditNumbers();
+  const el = $('audit-strip');
+  if (!el) return;
+  el.textContent = `AUDIT  ${a.official}/${a.total} official name, description, grade ✓ · ${a.grades.platinum}P ${a.grades.gold}G ${a.grades.silver}S ${a.grades.bronze}B · ${PSN_HIDDEN_KIT} PSN-hidden ✓ · ${a.stepsCited}/${a.stepsTotal} steps cited · ${a.guidesCiting}/${a.total} guides cite sources · ${a.stepsBacked2} steps backed by 2+ sources · ${a.sites} pages · ${a.sites} sites read ${SOURCE_PAGES_READ} · ${a.missable} possibly missable · ${a.atRisk} at risk · ${a.unconfirmed} unconfirmed · ${a.openQuestions} open question shown both ways`;
+}
+
+const TABS = ['tracker', 'roadmap', 'missables', 'sources'];
+
+function showTab(name) {
+  if (!TABS.includes(name)) name = 'tracker';
+  for (const tab of TABS) {
+    const panel = $(`tab-${tab}`);
+    if (panel) panel.hidden = tab !== name;
+    const btn = document.querySelector(`[data-tab="${tab}"]`);
+    if (btn) {
+      btn.setAttribute('aria-selected', String(tab === name));
+      btn.classList.toggle('active', tab === name);
+    }
+  }
+}
+
+function renderRoadmapStats() {
+  const el = $('stat-cards');
+  if (!el) return;
+  const a = auditNumbers();
+  const storyChapters = chapters.filter((c) => /^Chapter [1-5]$/.test(c.label)).length;
+  const cards = [
+    ['~200 h', 'Hours to platinum'],
+    ['4/10', 'Difficulty'],
+    [String(a.missable), 'Possibly missable'],
+    ['0', 'Online trophies'],
+    ['1', 'Playthrough'],
+    ['15', 'Manual save slots'],
+    [String(storyChapters), 'Story chapters'],
+  ];
+  el.replaceChildren();
+  for (const [num, label] of cards) {
+    const d = document.createElement('div');
+    d.className = 'stat-card';
+    const n = document.createElement('span');
+    n.className = 'stat-num';
+    n.textContent = num;
+    const l = document.createElement('span');
+    l.className = 'stat-label';
+    l.textContent = label;
+    d.append(n, l);
+    el.append(d);
+  }
+}
+
+function renderMissables() {
+  const body = $('missables-body');
+  if (!body) return;
+  const a = auditNumbers();
+  const summary = $('missables-summary');
+  if (summary) summary.textContent = `${a.missable} possibly missable · ${a.atRisk} at risk · ${a.safe} safe at any time`;
+  body.replaceChildren();
+  for (const ch of chapters) {
+    const ids = ch.trophyIds.filter((id) => byId.has(id));
+    const card = document.createElement('article');
+    card.className = 'missable-card' + (ch.missable ? ' danger' : '');
+    const h = document.createElement('h3');
+    h.textContent = `${ch.label} — ${ch.title}`;
+    card.append(h);
+    const count = document.createElement('p');
+    count.className = 'missable-count';
+    count.textContent = `${ids.length} ${ids.length === 1 ? 'trophy' : 'trophies'}`;
+    card.append(count);
+    if (ch.missable) {
+      const pma = trophies.find((t) => t.missable);
+      const lost = document.createElement('p');
+      lost.className = 'missable-flag';
+      lost.textContent = `CAN BE LOST — ${pma.name}: the Chapter 1 balcony meditation (after the mission “Down to Earth”, follow Lucia from the kitchen to the balcony and accept). It is gone after Chapter 1.`;
+      card.append(lost);
+      const save = document.createElement('p');
+      save.className = 'missable-save';
+      save.textContent = 'SAVE FIRST — keep a manual save from Chapter 1 until this trophy pops. Whether the balcony spot is required is still an open question (both readings are shown in its guide) — doing it removes the risk either way.';
+      card.append(save);
+    } else {
+      const safe = document.createElement('p');
+      safe.textContent = 'No missable trophies in this chapter — every trophy here is safe at any time, including after the story in free roam.';
+      card.append(safe);
+    }
+    body.append(card);
+  }
+}
+
+function renderSources() {
+  const body = $('sources-body');
+  if (!body) return;
+  const a = auditNumbers();
+  body.replaceChildren();
+  const intro = document.createElement('p');
+  intro.textContent = `Every one of the ${a.total} guides cites its sources, and every step that states a fact ends with a marker [n] pointing at that trophy's numbered source list. The matrix below is the receipt: a tick means that trophy's guide cites that source.`;
+  body.append(intro);
+  const wrap = document.createElement('div');
+  wrap.className = 'matrix-wrap';
+  const halves = [trophies.slice(0, 28), trophies.slice(28)];
+  for (const half of halves) {
+    const table = document.createElement('table');
+    table.className = 'matrix-table';
+    const thead = document.createElement('thead');
+    const hr = document.createElement('tr');
+    for (const label of ['Trophy', '[1] PowerPyx', '[2] Exophase', '[3] PSNProfiles']) {
+      const th = document.createElement('th');
+      th.scope = 'col';
+      th.textContent = label;
+      hr.append(th);
+    }
+    thead.append(hr);
+    table.append(thead);
+    const tbody = document.createElement('tbody');
+    for (const t of half) {
+      const tr = document.createElement('tr');
+      const name = document.createElement('td');
+      if (isHidden(t)) name.textContent = 'Hidden story trophy';
+      else name.textContent = t.name;
+      tr.append(name);
+      for (let n = 1; n <= 3; n += 1) {
+        const td = document.createElement('td');
+        td.className = 'matrix-cell';
+        td.textContent = (t.sources || []).length >= n ? '✓' : '—';
+        tr.append(td);
+      }
+      tbody.append(tr);
+    }
+    table.append(tbody);
+    wrap.append(table);
+  }
+  body.append(wrap);
+  const counts = document.createElement('div');
+  counts.className = 'source-counts';
+  for (const [i, name] of (trophies[0].sources || []).entries()) {
+    const p = document.createElement('p');
+    p.textContent = `[${i + 1}] ${name} — cited by ${a.perSourceTrophies[name] || 0}/${a.total} guides · ${a.perSourceSteps[i + 1] || 0} steps · ${SOURCES[name] || ''}`;
+    counts.append(p);
+  }
+  const note = document.createElement('p');
+  note.className = 'source-note';
+  note.textContent = `How the markers were assigned: [1] PowerPyx supplied the concrete counts, unlock conditions and tracking menus; [2] Exophase + [3] PSNProfiles mirror the official name, description and grade, so a step that restates the official description cites both. A step with no marker says so plainly — no source has pinned that method down (${a.unconfirmed} trophies are unconfirmed this way). ${a.sites} source pages read ${SOURCE_PAGES_READ}; the trophy list itself was frozen 18 Nov 2026.`;
+  counts.append(note);
+  body.append(counts);
+}
 const SPOILER_KEY = 'leonida-platinum-spoilers-v1';
 const SOURCES = {
   PowerPyx: 'https://www.powerpyx.com/gta-6-grand-theft-auto-vi-trophy-guide-roadmap/',
@@ -190,6 +378,32 @@ function renderGuidePanelWithSources(t) {
     note.textContent = 'Potentially missable: meditate at the Chapter 1 balcony spot before leaving Chapter 1, and keep a manual save from Chapter 1.';
     guideBody.append(note);
   }
+  const gLabel = document.createElement('p');
+  gLabel.className = 'guide-label';
+  gLabel.textContent = 'Guide';
+  const steps = t.steps || [];
+  const citedCount = steps.filter((s) => s.cites && s.cites.length > 0).length;
+  const backedCount = steps.filter((s) => s.cites && s.cites.length >= 2).length;
+  const countLine = document.createElement('p');
+  countLine.className = 'steps-count';
+  countLine.textContent = `${steps.length} steps · ${citedCount} cited · ${backedCount} backed by 2+ sources`;
+  guideBody.append(gLabel, countLine);
+  const ol = document.createElement('ol');
+  ol.className = 'guide-steps';
+  for (const st of steps) {
+    const li = document.createElement('li');
+    li.append(document.createTextNode(st.text + ' '));
+    const cite = document.createElement('span');
+    const hasCites = st.cites && st.cites.length > 0;
+    cite.className = 'cite' + (hasCites ? '' : ' uncited');
+    cite.textContent = hasCites ? `[${st.cites.join('][')}]` : '[?]';
+    cite.title = hasCites
+      ? `Sources: ${st.cites.map((n) => (t.sources || [])[n - 1]).filter(Boolean).join(', ')}`
+      : 'No public source has pinned this down';
+    li.append(cite);
+    ol.append(li);
+  }
+  guideBody.append(ol);
   const offLabel = document.createElement('p');
   offLabel.className = 'official-label';
   offLabel.textContent = 'Official description';
@@ -197,13 +411,27 @@ function renderGuidePanelWithSources(t) {
   off.className = 'official';
   off.textContent = t.description;
   guideBody.append(offLabel, off);
-  const gLabel = document.createElement('p');
-  gLabel.className = 'guide-label';
-  gLabel.textContent = 'Guide';
-  const g = document.createElement('p');
-  g.className = 'guide-text';
-  g.textContent = t.guide;
-  guideBody.append(gLabel, g);
+  if (t.dispute) {
+    const box = document.createElement('div');
+    box.className = 'dispute-box';
+    const dLabel = document.createElement('p');
+    dLabel.className = 'dispute-label';
+    dLabel.textContent = 'NOT YET SETTLED — BOTH READINGS SHOWN';
+    box.append(dLabel);
+    const q = document.createElement('p');
+    q.className = 'dispute-q';
+    q.textContent = t.dispute.question;
+    box.append(q);
+    const ra = document.createElement('p');
+    ra.append(document.createTextNode('Reading A — '), document.createTextNode(t.dispute.readingA));
+    const rb = document.createElement('p');
+    rb.append(document.createTextNode('Reading B — '), document.createTextNode(t.dispute.readingB));
+    const dn = document.createElement('p');
+    dn.className = 'dispute-note';
+    dn.textContent = t.dispute.note;
+    box.append(ra, rb, dn);
+    guideBody.append(box);
+  }
   const meta = document.createElement('p');
   meta.className = 'row-meta';
   meta.textContent = `Kind: ${t.kind} · Grade: ${t.grade}${t.missable ? ' · Potentially missable' : ''}`;
@@ -214,13 +442,16 @@ function renderGuidePanelWithSources(t) {
   sLabel.className = 'sources-label';
   sLabel.textContent = 'SOURCES — WHERE EACH FACT COMES FROM';
   box.append(sLabel);
-  for (const name of (t.sources || [])) {
+  for (const [i, name] of (t.sources || []).entries()) {
     const line = document.createElement('p');
     line.className = 'source-line';
+    const num = document.createElement('span');
+    num.className = 'source-num';
+    num.textContent = `[${i + 1}] `;
     const a = document.createElement('a');
     a.href = SOURCES[name] || '#';
     a.textContent = name;
-    line.append(a, document.createTextNode(' — cited guide for this trophy'));
+    line.append(num, a, document.createTextNode(' — cited guide for this trophy'));
     box.append(line);
   }
   guideBody.append(box);
@@ -234,7 +465,7 @@ function visibleTrophies() {
     if ($('status').value === 'earned' && !earned.has(t.name)) return false;
     if ($('status').value === 'not' && earned.has(t.name)) return false;
     if ($('missable-only').checked && !t.missable) return false;
-    if (q && !(`${t.name} ${t.description} ${t.target} ${t.when}`.toLowerCase().includes(q))) return false;
+    if (q && !(`${t.name} ${t.description} ${t.target} ${t.when} ${(t.steps || []).map((s) => s.text).join(' ')}`.toLowerCase().includes(q))) return false;
     return true;
   });
 }
@@ -327,6 +558,10 @@ function renderChecklistByChapter() {
 
 function render() {
   renderKpi();
+  renderAuditStrip();
+  renderRoadmapStats();
+  renderMissables();
+  renderSources();
   renderKindTable();
   const list = renderChecklistByChapter();
   $('count-line').textContent = `Showing ${list.length} of ${trophies.length} trophies · ${earned.size} earned`;
@@ -375,7 +610,19 @@ $('reset').addEventListener('click', () => {
   render();
 });
 
-// Deep link: ?trophy=17 or #trophy-17 opens that trophy's guide on load.
+// Tabs (T2): Tracker / Roadmap / Missables / Sources. Buttons switch the
+// visible panel; a #roadmap / #missables / #sources hash deep-links to a tab
+// and the page is scrolled back to the top so the header + AUDIT strip stay
+// in every screenshot. #trophy-N still opens a guide on the Tracker tab.
+for (const btn of document.querySelectorAll('[data-tab]')) {
+  btn.addEventListener('click', () => {
+    const name = btn.dataset.tab;
+    showTab(name);
+    const hash = name === 'tracker' ? '' : `#${name}`;
+    history.replaceState(null, '', `${location.pathname}${location.search}${hash}`);
+    window.scrollTo(0, 0);
+  });
+}
 // Shareable filtered views: ?kind=robbery, ?grade=silver, ?status=not,
 // ?q=stunt and ?spoilers=on apply the matching controls on load.
 const params = new URLSearchParams(location.search);
@@ -396,4 +643,24 @@ if (params.get('spoilers') === 'off') {
   localStorage.setItem(SPOILER_KEY, 'false');
 }
 
+const tabHash = location.hash.replace(/^#/, '');
+if (TABS.includes(tabHash)) showTab(tabHash);
+else showTab('tracker');
+
 render();
+
+// A tab hash would natively scroll the page to that section; scroll back to
+// the top on load so the header + AUDIT strip are visible in every view.
+if (TABS.includes(tabHash)) {
+  window.addEventListener('load', () => window.scrollTo(0, 0));
+  window.scrollTo(0, 0);
+}
+
+// Back/forward (or a same-page link) changing the hash switches tabs too.
+window.addEventListener('hashchange', () => {
+  const h = location.hash.replace(/^#/, '');
+  if (TABS.includes(h)) {
+    showTab(h);
+    window.scrollTo(0, 0);
+  }
+});

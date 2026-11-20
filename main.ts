@@ -19,6 +19,11 @@
 // (KPI platinum count, SOURCES label, roadmap text, CSS margins) and
 // retakes the 4 screenshots — no new files to copy.
 //
+// Round 5 note: copy logic still unchanged; round 5 restructures every guide
+// into numbered cited steps (app/data/trophies.json gains a steps array),
+// adds the AUDIT strip, Missables + Sources tabs, and retakes the 4
+// screenshots — no new files to copy, no new copy logic needed.
+//
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
