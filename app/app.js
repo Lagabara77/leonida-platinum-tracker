@@ -82,11 +82,11 @@ function renderRoadmapStats() {
   const storyChapters = chapters.filter((c) => /^Chapter [1-5]$/.test(c.label)).length;
   const cards = [
     ['~200 h', 'Hours to platinum'],
-    ['4/10', 'Difficulty'],
+    ['12', 'Story trophies'],
     [String(a.missable), 'Possibly missable'],
     ['0', 'Online trophies'],
     ['1', 'Playthrough'],
-    ['15', 'Manual save slots'],
+    ['36', 'Cleanup trophies'],
     [String(storyChapters), 'Story chapters'],
   ];
   el.replaceChildren();
