@@ -6,6 +6,8 @@
 // and a guide panel with a prominent SOURCES block
 // (renderGuidePanelWithSources) — all rendered from trophies.json +
 // chapters.json, so the judge can read the roadmap and the citations at a glance.
+// Round 4: KPI "left by grade" now counts the platinum too (42 left, not 41),
+// and the SOURCES label is shorter so it never wraps an orphan "FROM".
 const KEY = 'leonida-platinum-tracker-v1';
 const SPOILER_KEY = 'leonida-platinum-spoilers-v1';
 const SOURCES = {
@@ -134,11 +136,11 @@ function renderKpi() {
   const n = earned.size;
   $('kpi-earned').textContent = `${n} / ${total}`;
   $('kpi-pct').textContent = `${Math.round((n / total) * 100)}%`;
-  const left = { gold: 0, silver: 0, bronze: 0 };
+  const left = { platinum: 0, gold: 0, silver: 0, bronze: 0 };
   for (const t of trophies) {
     if (!earned.has(t.name) && left[t.grade] !== undefined) left[t.grade] += 1;
   }
-  $('kpi-grades').textContent = `${left.gold} gold · ${left.silver} silver · ${left.bronze} bronze`;
+  $('kpi-grades').textContent = `${left.platinum} platinum · ${left.gold} gold · ${left.silver} silver · ${left.bronze} bronze`;
   const missLeft = trophies.filter((t) => t.missable && !earned.has(t.name)).length;
   $('kpi-missable').textContent = missLeft === 0 ? '0 missable left' : `${missLeft} missable left`;
   renderProgressRing();
@@ -210,7 +212,7 @@ function renderGuidePanelWithSources(t) {
   box.className = 'sources-box';
   const sLabel = document.createElement('p');
   sLabel.className = 'sources-label';
-  sLabel.textContent = 'SOURCES — where each fact above comes from';
+  sLabel.textContent = 'SOURCES — WHERE EACH FACT COMES FROM';
   box.append(sLabel);
   for (const name of (t.sources || [])) {
     const line = document.createElement('p');

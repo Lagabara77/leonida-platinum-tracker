@@ -15,6 +15,10 @@
 // app/data/chapters.json, which is copied along with the rest of app/ by the
 // same cpSync call below — no special handling needed.
 //
+// Round 4 note: copy logic still unchanged; round 4 only polishes the app
+// (KPI platinum count, SOURCES label, roadmap text, CSS margins) and
+// retakes the 4 screenshots — no new files to copy.
+//
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
 //   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts

@@ -2,7 +2,10 @@
 /* Round 3: big platinum ring in the header, Next 5 platinum path, a
    horizontal chapter timeline, checklist grouped by chapter, and a guide
    panel with larger type plus a prominent SOURCES box — built so every
-   screenshot stays readable at a glance when shrunk. */
+   screenshot stays readable at a glance when shrunk.
+   Round 4: off-grid margins aligned (Next 5 + roadmap padding 2rem,
+   About list flush left) and the Next-5 badge darkened to #b93f1f for
+   4.5:1 contrast. */
 * { box-sizing: border-box; }
 html { font-size: 16px; }
 body {
@@ -46,14 +49,14 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 .kpi-label { color: #626a75; font-size: 0.9rem; }
 
 .nextup, .controls, .count-line { max-width: 1280px; margin: 0 auto; padding: 0 2rem; }
-.nextup { margin-top: 0.75rem; background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 0.75rem 1.25rem; }
+.nextup { margin-top: 0.75rem; background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 0.75rem 2rem; }
 .nextup h2 { margin-bottom: 0.25rem; }
 .next5 { margin: 0; padding-left: 0; list-style: none; }
 .next5 li { padding: 0.2rem 0; font-size: 1.05rem; }
 .next5 strong { color: #a03a1a; }
 .next-num {
   display: inline-block; width: 1.6rem; height: 1.6rem; line-height: 1.6rem; text-align: center;
-  background: #d24e2a; color: #fff; border-radius: 50%; font-weight: 700; margin-right: 0.5rem; font-size: 0.95rem;
+  background: #b93f1f; color: #fff; border-radius: 50%; font-weight: 700; margin-right: 0.5rem; font-size: 0.95rem;
 }
 .next5-note { margin: 0.35rem 0 0; color: #626a75; font-size: 0.9rem; }
 
@@ -152,7 +155,7 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 .timeline-flag { font-size: 0.8rem; font-weight: 800; color: #a03a1a; }
 
 .roadmap, .about { max-width: 1280px; margin: 2rem auto 0; padding: 0 2rem 2rem; }
-.roadmap { background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 1.25rem 1.5rem; }
+.roadmap { background: #ffffff; border: 1px solid #ddd5c8; border-radius: 14px; padding: 1.25rem 2rem; }
 .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.75rem; margin-top: 0.5rem; }
 .step-card {
   background: #f6f3ee; border: 1px solid #ddd5c8; border-radius: 14px;
@@ -173,7 +176,7 @@ button, select, input[type="search"] { font-size: 1rem; min-height: 44px; }
 .kind-table th, .kind-table td { text-align: left; padding: 0.2rem 0.5rem 0.2rem 0; border-bottom: 1px solid #e5ded0; }
 .kind-table th { color: #626a75; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
 .about { color: #3a4048; font-size: 0.95rem; }
-.about ul { padding-left: 1.25rem; }
+.about ul { padding-left: 0; }
 
 @media (max-width: 900px) {
   .layout { grid-template-columns: 1fr; }
